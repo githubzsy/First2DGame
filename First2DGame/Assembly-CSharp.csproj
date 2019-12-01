@@ -63,13 +63,21 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\CameraControl.cs" />
+    <Compile Include="Assets\Scripts\CameraControl.cs" />
+    <Compile Include="Assets\Scripts\Enemy.cs" />
+    <Compile Include="Assets\Scripts\EnemyEagle.cs" />
+    <Compile Include="Assets\Scripts\EnemyFrog.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\Zero Rare\Retro Sound Effects\Demo\Demo.cs" />
+    <None Include="Assets\CasualGameBGM05\ReadMe.txt" />
     <Reference Include="Unity.XR.Management">
       <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/Unity.XR.Management.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="Cinemachine">
+      <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/Cinemachine.dll</HintPath>
     </Reference>
     <Reference Include="Unity.Subsystem.Registration">
       <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/Unity.Subsystem.Registration.dll</HintPath>
@@ -101,17 +109,14 @@
     <Reference Include="Unity.2D.Tilemap.Editor">
       <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/Unity.2D.Tilemap.Editor.dll</HintPath>
     </Reference>
+    <Reference Include="com.unity.cinemachine.editor">
+      <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/com.unity.cinemachine.editor.dll</HintPath>
+    </Reference>
     <Reference Include="Unity.TextMeshPro">
       <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor.UI">
       <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/UnityEditor.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="Cinemachine">
-      <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/Cinemachine.dll</HintPath>
-    </Reference>
-    <Reference Include="com.unity.cinemachine.editor">
-      <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/com.unity.cinemachine.editor.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AIModule">
       <HintPath>D:/Program Files/Unity Editors/2020.1.0a14/Editor/Data/Managed/UnityEngine/UnityEngine.AIModule.dll</HintPath>
@@ -283,6 +288,9 @@
     </Reference>
     <Reference Include="UnityEngine.VideoModule">
       <HintPath>D:/Program Files/Unity Editors/2020.1.0a14/Editor/Data/Managed/UnityEngine/UnityEngine.VideoModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.VirtualTexturingModule">
+      <HintPath>D:/Program Files/Unity Editors/2020.1.0a14/Editor/Data/Managed/UnityEngine/UnityEngine.VirtualTexturingModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.WindModule">
       <HintPath>D:/Program Files/Unity Editors/2020.1.0a14/Editor/Data/Managed/UnityEngine/UnityEngine.WindModule.dll</HintPath>
