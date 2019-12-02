@@ -64,11 +64,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\CameraControl.cs" />
+    <Compile Include="Assets\Scripts\Dialog.cs" />
+    <Compile Include="Assets\Scripts\Door.cs" />
     <Compile Include="Assets\Scripts\Enemy.cs" />
     <Compile Include="Assets\Scripts\EnemyEagle.cs" />
     <Compile Include="Assets\Scripts\EnemyFrog.cs" />
+    <Compile Include="Assets\Scripts\Parallax.cs" />
     <Compile Include="Assets\Scripts\PlayerController.cs" />
+    <Compile Include="Assets\Scripts\SwitchScene.cs" />
     <Compile Include="Assets\Zero Rare\Retro Sound Effects\Demo\Demo.cs" />
+    <None Include="Assets\fonts\artianniugbbd_test\Readme.txt" />
     <None Include="Assets\CasualGameBGM05\ReadMe.txt" />
     <Reference Include="Unity.XR.Management">
       <HintPath>D:/Users/zhous/Source/Repos/githubzsy/First2DGame/First2DGame/Library/ScriptAssemblies/Unity.XR.Management.dll</HintPath>

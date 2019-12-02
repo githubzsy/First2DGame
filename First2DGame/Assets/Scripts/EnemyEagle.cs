@@ -28,9 +28,9 @@ public class EnemyEagle : Enemy
     /// </summary>
     private float _bottomY;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
 
         var top = transform.Find("top");
         _topY = top.transform.position.y;

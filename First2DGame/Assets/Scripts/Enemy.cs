@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
     /// </summary>
     protected AudioSource DeathAudioSource;
 
-    protected virtual void Start()
+    protected virtual void Awake()
     {
         Animator = GetComponent<Animator>();
         Rigidbody2D = GetComponent<Rigidbody2D>();
@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour
 
     protected void Death()
     {
+        Collider2D.enabled = false;
         Destroy(gameObject);
     }
 

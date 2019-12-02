@@ -43,9 +43,9 @@ public class EnemyFrog : Enemy
     /// </summary>
     [Header("跳起的音效")]
     public AudioSource JumpAudio;
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
 
         _initLocalScaleX = transform.localScale.x;
         var left = transform.Find("left");
@@ -64,16 +64,6 @@ public class EnemyFrog : Enemy
 
     void Movement()
     {
-        //如果在地上则添加速度
-        //速度方向与朝向相同
-        if (Collider2D.IsTouchingLayers(Ground))
-        {
-            JumpAudio.Play();
-            Animator.SetBool("jumping",true);
-            Rigidbody2D.velocity = new Vector2(_faceLeft ? -Speed : Speed, JumpForce);
-        }
-
-
         //若已到达边界，则转向
         if (transform.position.x < _leftX)
         {
@@ -85,8 +75,19 @@ public class EnemyFrog : Enemy
             _faceLeft = true;
         }
 
-        //控制scale转向
-        transform.localScale = new Vector3(_faceLeft ? _initLocalScaleX : -_initLocalScaleX, transform.localScale.y);
+        //如果在地上则添加速度
+        //速度方向与朝向相同
+        if (Collider2D.IsTouchingLayers(Ground))
+        {
+            //控制scale转向
+            transform.localScale = new Vector3(_faceLeft ? _initLocalScaleX : -_initLocalScaleX, transform.localScale.y);
+
+            JumpAudio.Play();
+            Animator.SetBool("jumping",true);
+            Rigidbody2D.velocity = new Vector2(_faceLeft ? -Speed : Speed, JumpForce);
+        }
+
+
     }
 
     /// <summary>
