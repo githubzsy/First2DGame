@@ -30,7 +30,7 @@ public class SwitchScene : MonoBehaviour
     void Update()
     {
         //若按下了交互按键，则进入到房子中
-        if (string.IsNullOrWhiteSpace(_nextSceneName) == false && Input.GetButtonDown("Interactive"))
+        if (string.IsNullOrWhiteSpace(_nextSceneName) == false && InputManager.IsInteractive())
         {
             SceneManager.LoadScene(_nextSceneName);
         }

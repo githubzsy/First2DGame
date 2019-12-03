@@ -12,14 +12,13 @@ public class Dialog : MonoBehaviour
 
     private Animator _animator;
 
+    private SwitchScene _switchScene;
+
     private void Awake()
     {
+        _switchScene = GetComponent<SwitchScene>();
         _text = transform.Find("Text").GetComponent<Text>();
         _animator = GetComponent<Animator>();
-    }
-
-    private void Start()
-    {
     }
 
     /// <summary>
@@ -31,10 +30,6 @@ public class Dialog : MonoBehaviour
         if (string.IsNullOrWhiteSpace(text) == false)
         {
             gameObject.SetActive(true);
-            if (_text == null)
-            {
-
-            }
             _text.text = text;
             //此处省略是因为Dialog默认启用动画就是ShowDialog
             //_animator.Play("ShowDialog");

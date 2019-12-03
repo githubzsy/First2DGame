@@ -109,7 +109,7 @@ public class PlayerController : MonoBehaviour
     [Header("跟着移动的相机")]
     public CinemachineVirtualCamera CinemachineVirtualCamera;
 
-    void Start()
+    void Awake()
     {
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
@@ -118,12 +118,10 @@ public class PlayerController : MonoBehaviour
         _celling = transform.Find("Celling");
     }
 
-
-
     void Update()
     {
 
-        if (Input.GetButton("Jump") && _collider2D.IsTouchingLayers(Ground))
+        if (InputManager.IsJump() && _collider2D.IsTouchingLayers(Ground))
         { 
             _jump = true;
         }
@@ -165,21 +163,19 @@ public class PlayerController : MonoBehaviour
     private void Run()
     {
         //横向移动
-        var h = Input.GetAxis("Horizontal");
-        var hDirection = Input.GetAxisRaw("Horizontal");
-
+        var h = InputManager.GetAxis(MoveAxis.Horizontal);
+       
         //角色移动
         if (h != 0)
         {
             _rigidbody2D.velocity = new Vector2(h * Speed * Time.fixedDeltaTime, _rigidbody2D.velocity.y);
-            _animator.SetFloat("running", Mathf.Abs(hDirection));
+            var hDirection = 0;
+            if (h > 0) hDirection = 1;
+            if (h < 0) hDirection = -1;
+            _animator.SetFloat("running", 1);
+            transform.localScale = new Vector3(hDirection, transform.localScale.y, transform.localScale.z);
         }
-
-        //角色方向
-        if (hDirection != 0)
-        {
-            transform.localScale = new Vector3(hDirection, transform.localScale.y,transform.localScale.z);
-        }
+        else _animator.SetFloat("running",0);
     }
 
     void Jump()

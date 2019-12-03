@@ -9,12 +9,6 @@ using UnityEngine.UI;
 public class Door : MonoBehaviour
 {
     /// <summary>
-    /// 提示文本的Panel
-    /// </summary>
-    [Header("提示文本的Panel")]
-    public GameObject Dialog;
-
-    /// <summary>
     /// 要切换的场景名称
     /// </summary>
     [Header("要切换的场景名称")]
@@ -26,18 +20,19 @@ public class Door : MonoBehaviour
     [Header("要提示的文字")]
     public string DialogText;
 
+    /// <summary>
+    /// 显示对话框的脚本
+    /// </summary>
     private Dialog _dialog;
-    void Start()
-    {
-        //设置要切换的场景
-        Dialog.GetComponent<SwitchScene>().SetNextSceneName(NextSceneName);
-        _dialog = Dialog.GetComponent<Dialog>();
-    }
 
-    // Update is called once per frame
-    void Update()
+    /// <summary>
+    /// 切换场景的脚本
+    /// </summary>
+    private SwitchScene _switchScene;
+    void Awake()
     {
-        
+        _dialog = FindObjectOfType<Dialog>(true);
+        _switchScene = FindObjectOfType<SwitchScene>(true);
     }
 
     /// <summary>
@@ -49,6 +44,7 @@ public class Door : MonoBehaviour
         if (collision.tag == "Player")
         {
             _dialog.ShowDialog(DialogText);
+            _switchScene.SetNextSceneName(NextSceneName);
         }
     }
 
@@ -62,6 +58,7 @@ public class Door : MonoBehaviour
         if (collision.tag == "Player")
         {
             _dialog.CloseDialog();
+            _switchScene.ClearNextSceneName();
         }
     }
 }
