@@ -23,16 +23,14 @@ public class Door : MonoBehaviour
     /// <summary>
     /// 显示对话框的脚本
     /// </summary>
-    private Dialog _dialog;
+    public Dialog Dialog;
 
     /// <summary>
     /// 切换场景的脚本
     /// </summary>
-    private SwitchScene _switchScene;
+    public SwitchScene SwitchScene;
     void Awake()
     {
-        _dialog = FindObjectOfType<Dialog>(true);
-        _switchScene = FindObjectOfType<SwitchScene>(true);
     }
 
     /// <summary>
@@ -43,8 +41,8 @@ public class Door : MonoBehaviour
     {
         if (collision.tag == "Player")
         {
-            _dialog.ShowDialog(DialogText);
-            _switchScene.SetNextSceneName(NextSceneName);
+            Dialog.ShowDialog(DialogText);
+            SwitchScene.SetNextSceneName(NextSceneName);
         }
     }
 
@@ -57,8 +55,8 @@ public class Door : MonoBehaviour
         //玩家离开时关闭对话框
         if (collision.tag == "Player")
         {
-            _dialog.CloseDialog();
-            _switchScene.ClearNextSceneName();
+            Dialog.CloseDialog();
+            SwitchScene.ClearNextSceneName();
         }
     }
 }

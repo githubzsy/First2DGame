@@ -25,12 +25,7 @@ public class PlayerController : MonoBehaviour
     /// 跳跃的力量
     /// </summary>
     [Header("跳跃的力量")]
-    public float JumpForce = 300f;
-
-    /// <summary>
-    /// 是否需要跳起
-    /// </summary>
-    private bool _jump = false;
+    public float JumpForce = 6f;
 
     /// <summary>
     /// 地面
@@ -59,39 +54,10 @@ public class PlayerController : MonoBehaviour
     private bool _isHurt;
 
     /// <summary>
-    /// Bgm音乐
-    /// </summary>
-    [Header("Bgm音乐")]
-    public AudioSource BgmAudio;
-    /// <summary>
-    /// 跳起时的声音
-    /// </summary>
-    [Header("跳起时的声音")]
-    public AudioSource JumpAudio;
-
-    /// <summary>
-    /// 受伤时的音效
-    /// </summary>
-    [Header("受伤时的音效")]
-    public AudioSource HurtAudio;
-
-    /// <summary>
-    /// 捡起草莓时的音效
-    /// </summary>
-    [Header("捡起草莓时的音效")]
-    public AudioSource CherryAudio;
-
-    /// <summary>
-    /// 死亡时的音效
-    /// </summary>
-    [Header("死亡时的音效")]
-    public AudioSource DeathAudio;
-
-    /// <summary>
     /// 弹起来的速度
     /// </summary>
     [Header("弹起来时的速度")]
-    public float BounceForce = 250;
+    public float BounceForce = 5f;
 
     /// <summary>
     /// 是否蹲下了
@@ -99,15 +65,40 @@ public class PlayerController : MonoBehaviour
     private bool _isCrouch = false;
 
     /// <summary>
-    /// 玩家的头顶
+    /// 玩家的头顶检测点
     /// </summary>
     private Transform _celling;
+
+    /// <summary>
+    /// 头顶检测半径
+    /// </summary>
+    private float _cellingCheckRadius = 0.5f;
+
+    /// <summary>
+    /// 玩家脚步检测点
+    /// </summary>
+    private Transform _groundCheck;
+
+    /// <summary>
+    /// 脚本检测半径范围
+    /// </summary>
+    private float _groundCheckRadius = 0.3f;
 
     /// <summary>
     /// 跟着移动的相机
     /// </summary>
     [Header("跟着移动的相机")]
     public CinemachineVirtualCamera CinemachineVirtualCamera;
+
+    /// <summary>
+    /// 是否踩在地面上
+    /// </summary>
+    private bool _isGround;
+
+    /// <summary>
+    /// 空中可跳跃的次数
+    /// </summary>
+    private int _extraJumpRemain;
 
     void Awake()
     {
@@ -116,29 +107,15 @@ public class PlayerController : MonoBehaviour
         _collider2D = GetComponent<CircleCollider2D>();
         _boxCollider2D = GetComponent<BoxCollider2D>();
         _celling = transform.Find("Celling");
+        _groundCheck = transform.Find("GroundCheck");
     }
 
     void Update()
     {
+        _isGround = Physics2D.OverlapCircle(_groundCheck.position, _groundCheckRadius, Ground);
 
-        if (InputManager.IsJump() && _collider2D.IsTouchingLayers(Ground))
-        { 
-            _jump = true;
-        }
+        _isCrouch = InputManager.IsCrouch();
 
-        if (Input.GetButtonDown("Crouch"))
-        {
-            _isCrouch = true;
-        }
-        else if (Input.GetButtonUp("Crouch"))
-        {
-            _isCrouch = false;
-        }
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
         //如果没有受伤则移动
         if (_isHurt == false)
         {
@@ -164,7 +141,7 @@ public class PlayerController : MonoBehaviour
     {
         //横向移动
         var h = InputManager.GetAxis(MoveAxis.Horizontal);
-       
+
         //角色移动
         if (h != 0)
         {
@@ -175,18 +152,35 @@ public class PlayerController : MonoBehaviour
             _animator.SetFloat("running", 1);
             transform.localScale = new Vector3(hDirection, transform.localScale.y, transform.localScale.z);
         }
-        else _animator.SetFloat("running",0);
+        else _animator.SetFloat("running", 0);
     }
 
     void Jump()
     {
-        //角色跳跃
-        if (_jump)
+        //若踩在地面上则恢复多段跳次数
+        if (_isGround)
         {
-            JumpAudio.Play();
-            _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, JumpForce * Time.fixedDeltaTime);
-            _animator.SetBool("jumping", true);
-            _jump = false;
+            _extraJumpRemain = 1;
+        }
+
+        //如果按下了跳跃键
+        if (InputManager.IsJump())
+        {
+            //若在地面则可以跳跃
+            if (_isGround)
+            {
+                SoundManager.Instance.JumpAudio();
+                _rigidbody2D.velocity = Vector2.up * JumpForce;
+                _animator.SetBool("jumping", true);
+            }
+            //否则空中跳跃次数大于0时也可以跳跃
+            else if (_extraJumpRemain > 0)
+            {
+                SoundManager.Instance.JumpAudio();
+                _rigidbody2D.velocity = Vector2.up * JumpForce;
+                _animator.SetBool("jumping", true);
+                _extraJumpRemain--;
+            }
         }
     }
 
@@ -201,7 +195,7 @@ public class PlayerController : MonoBehaviour
             _boxCollider2D.enabled = false;
         }
         //若不是蹲下，且头顶的0.5半径的圆里面没有Ground，则站起来
-        else if (Physics2D.OverlapCircle(_celling.position, 0.5f, Ground)==false)
+        else if (Physics2D.OverlapCircle(_celling.position, _cellingCheckRadius, Ground) == false)
         {
             _animator.SetBool("crouching", false);
             _boxCollider2D.enabled = true;
@@ -257,7 +251,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.tag == "Collection")
         {
-            CherryAudio.Play();
+            SoundManager.Instance.CherryAudio();
             Destroy(collision.gameObject);
             CherryCount++;
             CherryNum.text = CherryCount.ToString();
@@ -270,8 +264,8 @@ public class PlayerController : MonoBehaviour
                 //相机不再移动
                 CinemachineVirtualCamera.enabled = false;
             }
-            BgmAudio.Stop();
-            DeathAudio.Play();
+            SoundManager.Instance.DeathAudio();
+            SoundManager.Instance.StopBgm();
             Invoke("Reset", 2f);
         }
     }
@@ -300,12 +294,12 @@ public class PlayerController : MonoBehaviour
                 //青蛙被攻击了
                 collision.gameObject.GetComponent<Enemy>().Attacked();
                 //而且小跳一下
-                _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, BounceForce * Time.fixedDeltaTime);
+                _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, BounceForce);
                 _animator.SetBool("jumping", true);
             }
             else
             {
-                HurtAudio.Play();
+                SoundManager.Instance.HurtAudio();
                 _isHurt = true;
                 _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x > 0 ? -3 : 3, _rigidbody2D.velocity.y);
             }

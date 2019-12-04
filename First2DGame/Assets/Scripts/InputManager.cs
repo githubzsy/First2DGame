@@ -117,10 +117,31 @@ public class InputManager:MonoBehaviour
     public static float GetAxis(MoveAxis moveAxis)
     {
         var value = moveAxis == MoveAxis.Horizontal ? _moveJoyStick.Horizontal : _moveJoyStick.Vertical;
-        return value != 0f ? value : Input.GetAxis(moveAxis.ToString());
+        if (value == 0)
+        {
+            value = Input.GetAxis(moveAxis.ToString());
+        }
+        return value;
     }
 
+    /// <summary>
+    /// 是否蹲下了
+    /// </summary>
+    /// <returns></returns>
+    public static bool IsCrouch()
+    {
+        bool result;
+        //1.控制摇杆向下超过0.3返回true
+        result = _moveJoyStick.Vertical < -0.3;
 
+        //2.按下Crouch键返回true
+        if (result == false)
+        {
+            result = Input.GetButton("Crouch");
+        }
+
+        return result;
+    }
 }
 
 /// <summary>
@@ -128,5 +149,6 @@ public class InputManager:MonoBehaviour
 /// </summary>
 public enum MoveAxis
 {
-    Horizontal
+    Horizontal,
+    Vertical
 }
