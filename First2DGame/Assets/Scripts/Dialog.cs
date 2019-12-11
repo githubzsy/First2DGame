@@ -12,37 +12,41 @@ public class Dialog : MonoBehaviour
 
     private Animator _animator;
 
-    private SwitchScene _switchScene;
+    private static Dialog _instance;
 
     private void Awake()
     {
-        _switchScene = GetComponent<SwitchScene>();
+        if (_instance != null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
         _text = transform.Find("Text").GetComponent<Text>();
         _animator = GetComponent<Animator>();
+        _instance = this;
     }
 
     /// <summary>
     /// 启用Dialog并显示文字
     /// </summary>
     /// <param name="text">要显示的文字</param>
-    internal void ShowDialog(string text)
+    internal static void ShowDialog(string text)
     {
         if (string.IsNullOrWhiteSpace(text) == false)
         {
-            gameObject.SetActive(true);
-            _text.text = text;
-            //此处省略是因为Dialog默认启用动画就是ShowDialog
-            //_animator.Play("ShowDialog");
+            UIManager.SetDialogActive();
+            _instance._text.text = text;
         }
     }
 
     /// <summary>
     /// 关闭Dialog，后面动画播放完后会自动执行CloseDialogAnimCallBack
     /// </summary>
-    internal void CloseDialog()
+    internal static void CloseDialog()
     {
-        _text.text = null;
-        _animator.SetTrigger("close");
+        _instance._text.text = null;
+        _instance._animator.SetTrigger("close");
     }
 
     /// <summary>
@@ -50,6 +54,6 @@ public class Dialog : MonoBehaviour
     /// </summary>
     public void CloseDialogAnimCallBack()
     {
-        gameObject.SetActive(false);
+        _instance.gameObject.SetActive(false);
     }
 }

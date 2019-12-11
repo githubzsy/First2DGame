@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEditor;
@@ -16,18 +17,6 @@ public class PlayerController : MonoBehaviour
     private Animator _animator;
 
     /// <summary>
-    /// 初始速度
-    /// </summary>
-    [Header("初始速度")]
-    public float Speed = 300f;
-
-    /// <summary>
-    /// 跳跃的力量
-    /// </summary>
-    [Header("跳跃的力量")]
-    public float JumpForce = 6f;
-
-    /// <summary>
     /// 地面
     /// </summary>
     [Header("当前地面图层")]
@@ -43,21 +32,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private BoxCollider2D _boxCollider2D;
 
-    /// <summary>
-    /// 樱桃数量
-    /// </summary>
-    public int CherryCount = 0;
-
-    [Header("樱桃数量文本")]
-    public Text CherryNum;
-
     private bool _isHurt;
-
-    /// <summary>
-    /// 弹起来的速度
-    /// </summary>
-    [Header("弹起来时的速度")]
-    public float BounceForce = 5f;
 
     /// <summary>
     /// 是否蹲下了
@@ -96,9 +71,27 @@ public class PlayerController : MonoBehaviour
     private bool _isGround;
 
     /// <summary>
-    /// 空中可跳跃的次数
+    /// 剩余的空中可跳跃的次数
     /// </summary>
     private int _extraJumpRemain;
+
+    [Tooltip("当前玩家属性")]
+    public PlayerAttributes PlayerAttributes;
+
+    /// <summary>
+    /// 受伤后的无敌时间
+    /// </summary>
+    private float _invisibleTime = 0.5f;
+
+    /// <summary>
+    /// 可以受伤的时间
+    /// </summary>
+    private float _nextHurtTime;
+
+    /// <summary>
+    /// 玩家是否死了
+    /// </summary>
+    private bool _isDead = false;
 
     void Awake()
     {
@@ -108,6 +101,16 @@ public class PlayerController : MonoBehaviour
         _boxCollider2D = GetComponent<BoxCollider2D>();
         _celling = transform.Find("Celling");
         _groundCheck = transform.Find("GroundCheck");
+        _nextHurtTime = Time.time;
+    }
+
+    void Start()
+    {
+        if (!SoundManager.IsPlayingBgm())
+        {
+            SoundManager.PlayBgm();
+        }
+        UIManager.RefreshHp(PlayerAttributes.Hp);
     }
 
     void Update()
@@ -145,7 +148,7 @@ public class PlayerController : MonoBehaviour
         //角色移动
         if (h != 0)
         {
-            _rigidbody2D.velocity = new Vector2(h * Speed * Time.fixedDeltaTime, _rigidbody2D.velocity.y);
+            _rigidbody2D.velocity = new Vector2(h * PlayerAttributes.Speed * Time.fixedDeltaTime, _rigidbody2D.velocity.y);
             var hDirection = 0;
             if (h > 0) hDirection = 1;
             if (h < 0) hDirection = -1;
@@ -160,7 +163,7 @@ public class PlayerController : MonoBehaviour
         //若踩在地面上则恢复多段跳次数
         if (_isGround)
         {
-            _extraJumpRemain = 1;
+            _extraJumpRemain = PlayerAttributes.ExtraJumpCount;
         }
 
         //如果按下了跳跃键
@@ -169,15 +172,15 @@ public class PlayerController : MonoBehaviour
             //若在地面则可以跳跃
             if (_isGround)
             {
-                SoundManager.Instance.JumpAudio();
-                _rigidbody2D.velocity = Vector2.up * JumpForce;
+                SoundManager.JumpAudio();
+                _rigidbody2D.velocity = Vector2.up * PlayerAttributes.JumpForce;
                 _animator.SetBool("jumping", true);
             }
             //否则空中跳跃次数大于0时也可以跳跃
             else if (_extraJumpRemain > 0)
             {
-                SoundManager.Instance.JumpAudio();
-                _rigidbody2D.velocity = Vector2.up * JumpForce;
+                SoundManager.JumpAudio();
+                _rigidbody2D.velocity = Vector2.up * PlayerAttributes.JumpForce;
                 _animator.SetBool("jumping", true);
                 _extraJumpRemain--;
             }
@@ -244,39 +247,70 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 2D触发器进入时
+    /// 拾取樱桃
     /// </summary>
-    /// <param name="collision"></param>
-    private void OnTriggerEnter2D(Collider2D collision)
+    /// <param name="cherry"></param>
+    internal void PickCherry(GameObject cherry)
     {
-        if (collision.tag == "Collection")
-        {
-            SoundManager.Instance.CherryAudio();
-            Destroy(collision.gameObject);
-            CherryCount++;
-            CherryNum.text = CherryCount.ToString();
-        }
+        SoundManager.CherryAudio();
+        Destroy(cherry);
+        PlayerAttributes.CherryCount++;
+        UIManager.RefreshCherryCount(PlayerAttributes.CherryCount);
+    }
 
-        if (collision.tag == "DeadLine")
+    /// <summary>
+    /// 获取到了技能
+    /// </summary>
+    /// <param name="skill"></param>
+    internal void GetSkill(GameObject skill)
+    {
+        SoundManager.SkillAudio();
+        Destroy(skill);
+    }
+
+
+    /// <summary>
+    /// 玩家死亡
+    /// </summary>
+    internal void PlayerDie()
+    {
+        //保证玩家死亡效果不会重复触发
+        if (!_isDead)
         {
+            _isDead = true;
             if (CinemachineVirtualCamera != null)
             {
                 //相机不再移动
                 CinemachineVirtualCamera.enabled = false;
             }
-            SoundManager.Instance.DeathAudio();
-            SoundManager.Instance.StopBgm();
+
+            _collider2D.enabled = false;
+            _boxCollider2D.enabled = false;
+            _animator.SetBool("hurt", true);
+            SoundManager.DeathAudio();
+            SoundManager.StopBgm();
             Invoke("Reset", 2f);
         }
     }
 
+
     /// <summary>
-    /// 玩家死亡
+    /// 重新加载当前场景
     /// </summary>
     private void Reset()
     {
         //重新加载当前场景
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        var op = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+        op.completed += Reset_completed;
+    }
+
+    /// <summary>
+    /// 场景加载完成后玩家生命值回满
+    /// </summary>
+    /// <param name="obj"></param>
+    private void Reset_completed(AsyncOperation obj)
+    {
+        PlayerAttributes.Hp = PlayerAttributes.MaxHp;
     }
 
     /// <summary>
@@ -294,14 +328,22 @@ public class PlayerController : MonoBehaviour
                 //青蛙被攻击了
                 collision.gameObject.GetComponent<Enemy>().Attacked();
                 //而且小跳一下
-                _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, BounceForce);
+                _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, PlayerAttributes.BounceForce);
                 _animator.SetBool("jumping", true);
             }
-            else
+            //如果超出了无敌时间
+            else if (_nextHurtTime < Time.time)
             {
-                SoundManager.Instance.HurtAudio();
+                SoundManager.HurtAudio();
                 _isHurt = true;
+                PlayerAttributes.Hp--;
+                UIManager.RefreshHp(PlayerAttributes.Hp);
                 _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x > 0 ? -3 : 3, _rigidbody2D.velocity.y);
+                if (PlayerAttributes.Hp <= 0)
+                {
+                    PlayerDie();
+                }
+                _nextHurtTime = Time.time + _invisibleTime;
             }
         }
     }

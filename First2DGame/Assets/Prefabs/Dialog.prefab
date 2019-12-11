@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 8515702635905494401}
   - component: {fileID: 8515702635905494403}
   - component: {fileID: 1299004273}
-  - component: {fileID: 1029121812}
   m_Layer: 5
   m_Name: Dialog
   m_TagString: Untagged
@@ -106,18 +105,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0d327be77c640c84c949de4fc96337cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1029121812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8515702635905494407}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73bc2b0421eb23844a2fddd4c877e4cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8515702636069617103

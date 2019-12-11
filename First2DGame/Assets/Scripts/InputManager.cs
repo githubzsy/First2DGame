@@ -12,38 +12,45 @@ public class InputManager:MonoBehaviour
     /// <summary>
     /// 移动的虚拟手柄
     /// </summary>
-    public Joystick MoveJoystick;
-
-    private static Joystick _moveJoyStick;
+    private Joystick _moveJoystick;
 
     /// <summary>
     /// 互动的虚拟按键
     /// </summary>
-    public Button InteractiveButton;
+    private Button _interactiveButton;
     /// <summary>
     /// 是否点击了交互按键
     /// </summary>
-    private static bool _interactiveClick = false;
+    private bool _interactiveClick = false;
 
     /// <summary>
     /// 跳跃的虚拟按键
     /// </summary>
-    public Button JumpButton;
+    private Button _jumpButton;
 
     /// <summary>
     /// 是否点击了跳跃
     /// </summary>
-    private static bool _jumpClick = false;
+    private bool _jumpClick = false;
 
     /// <summary>
     /// 所有虚拟按键的父类
     /// </summary>
     public GameObject Joysticks;
 
-    private bool _isMobile = false;
+    private readonly bool _isMobile = false;
+
+    private static InputManager _instance;
 
     void Awake()
     {
+        if (_instance != null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
+
 #if UNITY_ANDROID
         _isMobile = true;
 #endif
@@ -52,9 +59,17 @@ public class InputManager:MonoBehaviour
             Joysticks.SetActive(true);
         }
 
-        JumpButton.onClick.AddListener(JumpButtonClick);
-        InteractiveButton.onClick.AddListener(InteractiveButtonClick);
-        _moveJoyStick = MoveJoystick;
+        _jumpButton = Joysticks.transform.Find("Jump").GetComponent<Button>();
+        _interactiveButton = Joysticks.transform.Find("Interactive").GetComponent<Button>();
+        _moveJoystick = Joysticks.transform.Find("MoveJoystick").GetComponent<Joystick>();
+
+        _instance = this;
+    }
+
+    private void Start()
+    {
+        _jumpButton.onClick.AddListener(JumpButtonClick);
+        _interactiveButton.onClick.AddListener(InteractiveButtonClick);
     }
 
     /// <summary>
@@ -82,10 +97,10 @@ public class InputManager:MonoBehaviour
     /// <returns></returns>
     public static bool IsJump()
     {
-        var result = _jumpClick;
-        if (_jumpClick)
+        var result = _instance._jumpClick;
+        if (_instance._jumpClick)
         {
-            _jumpClick = false;
+            _instance._jumpClick = false;
         }
         else
         {
@@ -101,10 +116,10 @@ public class InputManager:MonoBehaviour
     /// <returns></returns>
     public static bool IsInteractive()
     {
-         var result = _interactiveClick;
-        if (_interactiveClick)
+        var result = _instance._interactiveClick;
+        if (_instance._interactiveClick)
         {
-            _interactiveClick = false;
+            _instance._interactiveClick = false;
         }
         else
         {
@@ -116,7 +131,7 @@ public class InputManager:MonoBehaviour
 
     public static float GetAxis(MoveAxis moveAxis)
     {
-        var value = moveAxis == MoveAxis.Horizontal ? _moveJoyStick.Horizontal : _moveJoyStick.Vertical;
+        var value = moveAxis == MoveAxis.Horizontal ? _instance._moveJoystick.Horizontal : _instance._moveJoystick.Vertical;
         if (value == 0)
         {
             value = Input.GetAxis(moveAxis.ToString());
@@ -132,7 +147,7 @@ public class InputManager:MonoBehaviour
     {
         bool result;
         //1.控制摇杆向下超过0.3返回true
-        result = _moveJoyStick.Vertical < -0.3;
+        result = _instance._moveJoystick.Vertical < -0.3;
 
         //2.按下Crouch键返回true
         if (result == false)

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,56 +24,82 @@ public class SoundManager : MonoBehaviour
     [Header("捡起樱桃的音效")]
     public AudioClip CherryAudioClip;
 
+    [Header("获取技能的音效")]
+    public AudioClip SkillAudioClip;
+
     [Header("播放玩家死亡的音效")]
     public AudioClip DeathAudioClip;
     /// <summary>
     /// 当前声音管理单例
     /// </summary>
-    public static SoundManager Instance;
+    private static SoundManager _instance;
 
     void Awake()
     {
-        Instance = this;
+        if (_instance != null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
         var sources = GetComponents<AudioSource>();
         _audioSource = sources[0];
         _bgmAudioSource = sources[1];
+        _instance = this;
+        DontDestroyOnLoad(this.gameObject);
     }
 
     /// <summary>
     /// 播放跳起的音效
     /// </summary>
-    public void JumpAudio()
+    public static void JumpAudio()
     {
-        _audioSource.clip = JumpAudioClip;
-        _audioSource.Play();
+        _instance._audioSource.clip = _instance.JumpAudioClip;
+        _instance._audioSource.Play();
     }
 
     /// <summary>
     /// 播放捡起樱桃的音效
     /// </summary>
-    public void CherryAudio()
+    public static void CherryAudio()
     {
-        _audioSource.clip = CherryAudioClip;
-        _audioSource.Play();
+        _instance._audioSource.clip = _instance.CherryAudioClip;
+        _instance._audioSource.Play();
     }
 
     /// <summary>
     /// 播放受伤的音效
     /// </summary>
-    public void HurtAudio()
+    public static void HurtAudio()
     {
-        _audioSource.clip = HurtAudioClip;
-        _audioSource.Play();
+        _instance._audioSource.clip = _instance.HurtAudioClip;
+        _instance._audioSource.Play();
     }
 
-    public void DeathAudio()
+    public static void DeathAudio()
     {
-        _audioSource.clip = DeathAudioClip;
-        _audioSource.Play();
+        _instance._audioSource.clip = _instance.DeathAudioClip;
+        _instance._audioSource.Play();
     }
 
-    public void StopBgm()
+    public static void PlayBgm()
     {
-        _bgmAudioSource.Stop();
+        _instance._bgmAudioSource.Play();
+    }
+
+    public static void StopBgm()
+    {
+        _instance._bgmAudioSource.Stop();
+    }
+
+    internal static bool IsPlayingBgm()
+    {
+        return _instance._bgmAudioSource.isPlaying;
+    }
+
+    internal static void SkillAudio()
+    {
+        _instance._audioSource.clip = _instance.SkillAudioClip;
+        _instance._audioSource.Play();
     }
 }
