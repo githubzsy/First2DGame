@@ -41,6 +41,17 @@ public class Dialog : MonoBehaviour
     }
 
     /// <summary>
+    /// 启用Dialog并显示文字，并在一定时间后关闭
+    /// </summary>
+    /// <param name="text">要显示的文字</param>
+    /// <param name="closeTime">关闭的时间</param>
+    internal static void ShowDialog(string text,float closeTime)
+    {
+       ShowDialog(text);
+       _instance.StartCoroutine(DelayToInvoke.DelayToInvokeDo(CloseDialog,closeTime));
+    }
+
+    /// <summary>
     /// 关闭Dialog，后面动画播放完后会自动执行CloseDialogAnimCallBack
     /// </summary>
     internal static void CloseDialog()

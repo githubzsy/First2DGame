@@ -287,8 +287,8 @@ GameObject:
   - component: {fileID: 102782487}
   - component: {fileID: 102782489}
   - component: {fileID: 102782488}
-  - component: {fileID: 102782490}
   - component: {fileID: 102782491}
+  - component: {fileID: 102782490}
   m_Layer: 5
   m_Name: MainMenu
   m_TagString: Untagged
@@ -361,11 +361,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 102782486}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7be11d7df5d257144baa9997372352a1, type: 3}
+  m_Script: {fileID: 11500000, guid: c223c72af8d7fa647916fdc96a71a0f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PauseMenu: {fileID: 0}
-  AudioMixer: {fileID: 0}
+  PlayButton: {fileID: 1126190088}
+  QuitButton: {fileID: 1653930861}
 --- !u!95 &102782491
 Animator:
   serializedVersion: 3
@@ -688,18 +688,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1126190089}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 102782490}
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1126190089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1072,18 +1061,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1653930862}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 102782490}
-        m_MethodName: Quit
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &1653930862
 MonoBehaviour:
   m_ObjectHideFlags: 0

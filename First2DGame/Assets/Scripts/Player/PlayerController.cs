@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
     /// 跟着移动的相机
     /// </summary>
     [Header("跟着移动的相机")]
-    public CinemachineVirtualCamera CinemachineVirtualCamera;
+    private CinemachineVirtualCamera _cinemachineVirtualCamera;
 
     /// <summary>
     /// 是否踩在地面上
@@ -74,9 +74,6 @@ public class PlayerController : MonoBehaviour
     /// 剩余的空中可跳跃的次数
     /// </summary>
     private int _extraJumpRemain;
-
-    [Tooltip("当前玩家属性")]
-    public PlayerAttributes PlayerAttributes;
 
     /// <summary>
     /// 受伤后的无敌时间
@@ -93,8 +90,24 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     private bool _isDead = false;
 
+
+    private PlayerAttribute _playerAttribute;
+
+    /// <summary>
+    /// 玩家本地化数据存储位置
+    /// </summary>
+    internal static string PlayerAttributeJson = "PlayerAttribute.json";
+
+    private static PlayerController _instance;
     void Awake()
     {
+        if (_instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        _instance = this;
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
         _collider2D = GetComponent<CircleCollider2D>();
@@ -102,15 +115,59 @@ public class PlayerController : MonoBehaviour
         _celling = transform.Find("Celling");
         _groundCheck = transform.Find("GroundCheck");
         _nextHurtTime = Time.time;
+        LoadPlayer();
     }
 
     void Start()
     {
+        AttachToOthers();
         if (!SoundManager.IsPlayingBgm())
         {
             SoundManager.PlayBgm();
         }
-        UIManager.RefreshHp(PlayerAttributes.Hp);
+        UIManager.RefreshHp(_playerAttribute.Hp);
+        UIManager.RefreshCherryCount(_playerAttribute.CherryCount);
+    }
+
+    /// <summary>
+    /// 读取玩家信息
+    /// </summary>
+    static void LoadPlayer()
+    {
+        _instance._playerAttribute = JsonManager.ReadFormFile<PlayerAttribute>(PlayerAttributeJson);
+        if (SceneManager.GetActiveScene().buildIndex == _instance._playerAttribute.SaveSceneIndex)
+        {
+            _instance.transform.position = _instance._playerAttribute.SavePosition;
+        }
+    }
+
+    /// <summary>
+    /// 保存玩家信息
+    /// </summary>
+    internal static void SavePlayer()
+    {
+        _instance._playerAttribute.SaveSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        _instance._playerAttribute.SavePosition = _instance.transform.position;
+        _instance._playerAttribute.SaveToFile(PlayerAttributeJson);
+    }
+
+    /// <summary>
+    /// 将玩家添加到其它脚本引用上
+    /// </summary>
+    void AttachToOthers()
+    {
+        _cinemachineVirtualCamera = FindObjectOfType<CinemachineVirtualCamera>();
+        if (_cinemachineVirtualCamera != null)
+        {
+            _cinemachineVirtualCamera.Follow = transform;
+        }
+
+        DeadLine deadLine = FindObjectOfType<DeadLine>();
+        if (deadLine != null)
+        {
+            deadLine.PlayerController = this;
+        }
+
     }
 
     void Update()
@@ -148,7 +205,7 @@ public class PlayerController : MonoBehaviour
         //角色移动
         if (h != 0)
         {
-            _rigidbody2D.velocity = new Vector2(h * PlayerAttributes.Speed * Time.fixedDeltaTime, _rigidbody2D.velocity.y);
+            _rigidbody2D.velocity = new Vector2(h * _playerAttribute.Speed * Time.fixedDeltaTime, _rigidbody2D.velocity.y);
             var hDirection = 0;
             if (h > 0) hDirection = 1;
             if (h < 0) hDirection = -1;
@@ -163,7 +220,7 @@ public class PlayerController : MonoBehaviour
         //若踩在地面上则恢复多段跳次数
         if (_isGround)
         {
-            _extraJumpRemain = PlayerAttributes.ExtraJumpCount;
+            _extraJumpRemain = _playerAttribute.ExtraJumpCount;
         }
 
         //如果按下了跳跃键
@@ -173,14 +230,14 @@ public class PlayerController : MonoBehaviour
             if (_isGround)
             {
                 SoundManager.JumpAudio();
-                _rigidbody2D.velocity = Vector2.up * PlayerAttributes.JumpForce;
+                _rigidbody2D.velocity = Vector2.up * _playerAttribute.JumpForce;
                 _animator.SetBool("jumping", true);
             }
             //否则空中跳跃次数大于0时也可以跳跃
             else if (_extraJumpRemain > 0)
             {
                 SoundManager.JumpAudio();
-                _rigidbody2D.velocity = Vector2.up * PlayerAttributes.JumpForce;
+                _rigidbody2D.velocity = Vector2.up * _playerAttribute.JumpForce;
                 _animator.SetBool("jumping", true);
                 _extraJumpRemain--;
             }
@@ -247,54 +304,6 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// 拾取樱桃
-    /// </summary>
-    /// <param name="cherry"></param>
-    internal void PickCherry(GameObject cherry)
-    {
-        SoundManager.CherryAudio();
-        Destroy(cherry);
-        PlayerAttributes.CherryCount++;
-        UIManager.RefreshCherryCount(PlayerAttributes.CherryCount);
-    }
-
-    /// <summary>
-    /// 获取到了技能
-    /// </summary>
-    /// <param name="skill"></param>
-    internal void GetSkill(GameObject skill)
-    {
-        SoundManager.SkillAudio();
-        Destroy(skill);
-    }
-
-
-    /// <summary>
-    /// 玩家死亡
-    /// </summary>
-    internal void PlayerDie()
-    {
-        //保证玩家死亡效果不会重复触发
-        if (!_isDead)
-        {
-            _isDead = true;
-            if (CinemachineVirtualCamera != null)
-            {
-                //相机不再移动
-                CinemachineVirtualCamera.enabled = false;
-            }
-
-            _collider2D.enabled = false;
-            _boxCollider2D.enabled = false;
-            _animator.SetBool("hurt", true);
-            SoundManager.DeathAudio();
-            SoundManager.StopBgm();
-            Invoke("Reset", 2f);
-        }
-    }
-
-
-    /// <summary>
     /// 重新加载当前场景
     /// </summary>
     private void Reset()
@@ -310,7 +319,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="obj"></param>
     private void Reset_completed(AsyncOperation obj)
     {
-        PlayerAttributes.Hp = PlayerAttributes.MaxHp;
+        _playerAttribute.Hp = _playerAttribute.MaxHp;
     }
 
     /// <summary>
@@ -328,7 +337,7 @@ public class PlayerController : MonoBehaviour
                 //青蛙被攻击了
                 collision.gameObject.GetComponent<Enemy>().Attacked();
                 //而且小跳一下
-                _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, PlayerAttributes.BounceForce);
+                _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x, _playerAttribute.BounceForce);
                 _animator.SetBool("jumping", true);
             }
             //如果超出了无敌时间
@@ -336,15 +345,84 @@ public class PlayerController : MonoBehaviour
             {
                 SoundManager.HurtAudio();
                 _isHurt = true;
-                PlayerAttributes.Hp--;
-                UIManager.RefreshHp(PlayerAttributes.Hp);
+                _playerAttribute.Hp--;
+                UIManager.RefreshHp(_playerAttribute.Hp);
                 _rigidbody2D.velocity = new Vector2(_rigidbody2D.velocity.x > 0 ? -3 : 3, _rigidbody2D.velocity.y);
-                if (PlayerAttributes.Hp <= 0)
+                if (_playerAttribute.Hp <= 0)
                 {
                     PlayerDie();
                 }
                 _nextHurtTime = Time.time + _invisibleTime;
             }
         }
+    }
+
+    /// <summary>
+    /// 拾取樱桃
+    /// </summary>
+    /// <param name="cherry"></param>
+    internal static void PickCherry(GameObject cherry)
+    {
+        Destroy(cherry);
+        _instance._playerAttribute.CherryCount++;
+        if (_instance._playerAttribute.CherryCount % 10 == 0)
+        {
+            _instance._playerAttribute.MaxHp++;
+            _instance._playerAttribute.Hp++;
+            UIManager.RefreshHp(_instance._playerAttribute.Hp);
+            SoundManager.MaxHpIncreaseAudio();
+        }
+        else SoundManager.CherryAudio();
+
+        UIManager.RefreshCherryCount(_instance._playerAttribute.CherryCount);
+    }
+
+    /// <summary>
+    /// 获取到了技能
+    /// </summary>
+    /// <param name="skill"></param>
+    internal static void PickSkill(GameObject skill)
+    {
+        SoundManager.SkillAudio();
+        Destroy(skill);
+    }
+
+
+    /// <summary>
+    /// 玩家死亡
+    /// </summary>
+    internal static void PlayerDie()
+    {
+        //保证玩家死亡效果不会重复触发
+        if (_instance != null && _instance._isDead == false)
+        {
+            _instance._isDead = true;
+            if (_instance._cinemachineVirtualCamera != null)
+            {
+                //相机不再移动
+                _instance._cinemachineVirtualCamera.enabled = false;
+            }
+
+            _instance._collider2D.enabled = false;
+            _instance._boxCollider2D.enabled = false;
+            _instance._animator.SetBool("hurt", true);
+            SoundManager.DeathAudio();
+            SoundManager.StopBgm();
+            _instance.Invoke("Reset", 2f);
+            _instance = null;
+        }
+    }
+
+    /// <summary>
+    /// 增加一次额外跳跃的能力
+    /// </summary>
+    internal void ExtraJumpIncrease()
+    {
+        _instance._playerAttribute.ExtraJumpCount++;
+    }
+
+    internal int GetSaveSceneIndex()
+    {
+        return _playerAttribute.SaveSceneIndex;
     }
 }

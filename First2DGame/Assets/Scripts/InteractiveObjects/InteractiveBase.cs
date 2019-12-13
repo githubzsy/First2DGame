@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// 可交互物体基类
 /// </summary>
+[Serializable]
 public abstract class InteractiveBase : MonoBehaviour
 {
     [Tooltip("当前玩家")]
@@ -17,7 +19,8 @@ public abstract class InteractiveBase : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        //因为玩家身上有两个Collider，这里只用圆形的触发即可
+        if (collision.CompareTag("Player") && collision is CircleCollider2D)
         {
             _canInteractive = true;
             OnTriggerEnter2DAfter(collision);
@@ -35,7 +38,7 @@ public abstract class InteractiveBase : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && collision is CircleCollider2D)
         {
             _canInteractive = false;
             OnTriggerExit2DAfter(collision);

@@ -1,0 +1,31 @@
+{
+    "Collections": [
+        {
+            "Position": {
+                "x": 0,
+                "y": 0,
+                "z": 0.0
+            },
+            "PickedUp": false,
+            "PrefabFileName": "Prefabs/SkillOneMoreJump"
+        },
+        {
+            "Position": {
+                "x": 4.61,
+                "y": 2.47,
+                "z": 0.0
+            },
+            "PickedUp": false,
+            "PrefabFileName": "Prefabs/Cherry"
+        },
+        {
+            "Position": {
+                "x": 6.94,
+                "y": -3.74,
+                "z": 0.0
+            },
+            "PickedUp": false,
+            "PrefabFileName": "Prefabs/Cherry"
+        }
+    ]
+}

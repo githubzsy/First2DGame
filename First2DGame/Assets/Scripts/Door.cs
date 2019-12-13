@@ -33,6 +33,8 @@ public class Door : InteractiveBase
 
     protected override void PlayerInteractive()
     {
+        PlayerController.SavePlayer();
+        CollectionManager.SaveCollections();
         SceneManager.LoadScene(NextSceneName);
     }
 

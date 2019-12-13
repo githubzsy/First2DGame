@@ -14,7 +14,9 @@ public class SkillOneMoreJump : InteractiveBase
 
     protected override void OnTriggerEnter2DAfter(Collider2D playerCollision)
     {
-        PlayerController.PlayerAttributes.ExtraJumpCount++;
-        PlayerController.GetSkill(this.gameObject);
+        CollectionManager.PickedUp(this);
+        PlayerController.ExtraJumpIncrease();
+        PlayerController.PickSkill(this.gameObject);
+        Dialog.ShowDialog("获得技能：空中跳跃",2);
     }
 }

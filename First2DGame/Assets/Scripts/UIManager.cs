@@ -26,6 +26,13 @@ public class UIManager : MonoBehaviour
     [Tooltip("恢复按钮")]
     public Button ResumeButton;
 
+
+    /// <summary>
+    /// 保存退出按钮
+    /// </summary>
+    [Tooltip("保存退出按钮")]
+    public Button SaveExitButton;
+
     /// <summary>
     /// 对话框
     /// </summary>
@@ -68,6 +75,7 @@ public class UIManager : MonoBehaviour
     {
         PauseButton.onClick.AddListener(PauseGame);
         ResumeButton.onClick.AddListener(ResumeGame);
+        SaveExitButton.onClick.AddListener(ResumeGame);
     }
 
 
@@ -113,6 +121,13 @@ public class UIManager : MonoBehaviour
         _instance.PauseMenu.SetActive(false);
         //暂停时间
         Time.timeScale = 1f;
+    }
+
+    public static void SaveAndExitGame()
+    {
+        PlayerController.SavePlayer();
+        CollectionManager.SaveCollections();
+        Application.Quit();
     }
 
     /// <summary>

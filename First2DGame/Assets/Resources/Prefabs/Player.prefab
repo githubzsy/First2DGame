@@ -168,7 +168,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!61 &7173268518743648022
 BoxCollider2D:
@@ -227,8 +227,6 @@ MonoBehaviour:
   Ground:
     serializedVersion: 2
     m_Bits: 256
-  CinemachineVirtualCamera: {fileID: 0}
-  PlayerAttributes: {fileID: 11400000, guid: 7dcce7f798c93b6419f5280c31bf8ada, type: 2}
 --- !u!95 &7173268518743648040
 Animator:
   serializedVersion: 3
