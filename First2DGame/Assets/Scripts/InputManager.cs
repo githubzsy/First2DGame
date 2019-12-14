@@ -38,7 +38,7 @@ public class InputManager:MonoBehaviour
     /// </summary>
     public GameObject Joysticks;
 
-    private readonly bool _isMobile = false;
+    private bool _isMobile = false;
 
     private static InputManager _instance;
 
