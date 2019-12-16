@@ -72,11 +72,15 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        PauseButton.onClick.AddListener(PauseGame);
-        ResumeButton.onClick.AddListener(ResumeGame);
-        SaveExitButton.onClick.AddListener(ResumeGame);
-    }
+        EventManager.StartListening("PauseGame", PauseGame);
+        PauseButton.onClick.AddListener(()=> EventManager.TriggerEvent("PauseGame"));
 
+        EventManager.StartListening("ResumeGame", ResumeGame);
+        ResumeButton.onClick.AddListener(() => EventManager.TriggerEvent("ResumeGame"));
+
+        EventManager.StartListening("SaveGame",SaveManager.SaveGame);
+        SaveExitButton.onClick.AddListener(()=>EventManager.TriggerEvent("SaveGame"));
+    }
 
     /// <summary>
     /// 开始游戏
@@ -124,7 +128,7 @@ public class UIManager : MonoBehaviour
 
     public static void SaveAndExitGame()
     {
-        PlayerController.SavePlayer();
+        PlayerManager.SavePlayer();
         CollectionManager.SaveCollections();
         Application.Quit();
     }

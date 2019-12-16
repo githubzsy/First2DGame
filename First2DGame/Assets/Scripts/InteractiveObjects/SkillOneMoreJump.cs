@@ -16,7 +16,7 @@ public class SkillOneMoreJump : InteractiveBase
     {
         CollectionManager.PickedUp(this);
         PlayerController.ExtraJumpIncrease();
-        PlayerController.PickSkill(this.gameObject);
+        PlayerManager.PickSkill(this.gameObject);
         Dialog.ShowDialog("获得技能：空中跳跃",2);
     }
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SoundManager : MonoBehaviour
+public class AudioManager : MonoBehaviour
 {
     /// <summary>
     /// 音效播放器
@@ -39,7 +39,7 @@ public class SoundManager : MonoBehaviour
     /// <summary>
     /// 当前声音管理单例
     /// </summary>
-    private static SoundManager _instance;
+    private static AudioManager _instance;
 
     [Tooltip("最大Hp增长时的音效")]
     public AudioClip MaxHpAudio;

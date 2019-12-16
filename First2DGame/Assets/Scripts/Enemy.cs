@@ -32,7 +32,7 @@ public class Enemy : MonoBehaviour
     public void Attacked()
     {
         Instantiate(DeathPrefab, transform.position, Quaternion.identity);
-        SoundManager.EnemyDeadAudio();
+        AudioManager.EnemyDeadAudio();
         Destroy(gameObject);
     }
 }

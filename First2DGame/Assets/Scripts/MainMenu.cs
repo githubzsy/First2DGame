@@ -15,7 +15,7 @@ public class MainMenu : MonoBehaviour
     {
         PlayButton.onClick.AddListener(Play);
         QuitButton.onClick.AddListener(Quit);
-        _playerAttribute=JsonManager.ReadFormFile<PlayerAttribute>(PlayerController.PlayerAttributeJson, true);
+        _playerAttribute=SaveManager.ReadFormFile<PlayerAttribute>(PlayerManager.PlayerAttributeJson, true);
     }
 
     private void Quit()

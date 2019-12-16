@@ -10,7 +10,7 @@ using UnityEngine;
 public abstract class InteractiveBase : MonoBehaviour
 {
     [Tooltip("当前玩家")]
-    public PlayerController PlayerController;
+    public PlayerManager PlayerController;
 
     /// <summary>
     /// 此时是否能够进行交互

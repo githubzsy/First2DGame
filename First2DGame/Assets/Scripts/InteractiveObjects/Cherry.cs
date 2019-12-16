@@ -12,6 +12,6 @@ public class Cherry : InteractiveBase
     protected override void OnTriggerEnter2DAfter(Collider2D collision)
     {
         CollectionManager.PickedUp(this);
-        PlayerController.PickCherry(this.gameObject);
+        PlayerManager.PickCherry(this.gameObject);
     }
 }

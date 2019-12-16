@@ -7,7 +7,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
+/// <summary>
+/// 玩家管理类
+/// </summary>
+public class PlayerManager : MonoBehaviour
 {
     /// <summary>
     /// 当前刚体
@@ -78,7 +81,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 受伤后的无敌时间
     /// </summary>
-    private float _invisibleTime = 0.5f;
+    private float _invisibleTime = 0.7f;
 
     /// <summary>
     /// 可以受伤的时间
@@ -98,7 +101,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     internal static string PlayerAttributeJson = "PlayerAttribute.json";
 
-    private static PlayerController _instance;
+    private static PlayerManager _instance;
     void Awake()
     {
         if (_instance != null)
@@ -121,9 +124,9 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         AttachToOthers();
-        if (!SoundManager.IsPlayingBgm())
+        if (!AudioManager.IsPlayingBgm())
         {
-            SoundManager.PlayBgm();
+            AudioManager.PlayBgm();
         }
         UIManager.RefreshHp(_playerAttribute.Hp);
         UIManager.RefreshCherryCount(_playerAttribute.CherryCount);
@@ -134,7 +137,7 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     static void LoadPlayer()
     {
-        _instance._playerAttribute = JsonManager.ReadFormFile<PlayerAttribute>(PlayerAttributeJson);
+        _instance._playerAttribute = SaveManager.ReadFormFile<PlayerAttribute>(PlayerAttributeJson);
         if (SceneManager.GetActiveScene().buildIndex == _instance._playerAttribute.SaveSceneIndex)
         {
             _instance.transform.position = _instance._playerAttribute.SavePosition;
@@ -229,14 +232,14 @@ public class PlayerController : MonoBehaviour
             //若在地面则可以跳跃
             if (_isGround)
             {
-                SoundManager.JumpAudio();
+                AudioManager.JumpAudio();
                 _rigidbody2D.velocity = Vector2.up * _playerAttribute.JumpForce;
                 _animator.SetBool("jumping", true);
             }
             //否则空中跳跃次数大于0时也可以跳跃
             else if (_extraJumpRemain > 0)
             {
-                SoundManager.JumpAudio();
+                AudioManager.JumpAudio();
                 _rigidbody2D.velocity = Vector2.up * _playerAttribute.JumpForce;
                 _animator.SetBool("jumping", true);
                 _extraJumpRemain--;
@@ -343,7 +346,7 @@ public class PlayerController : MonoBehaviour
             //如果超出了无敌时间
             else if (_nextHurtTime < Time.time)
             {
-                SoundManager.HurtAudio();
+                AudioManager.HurtAudio();
                 _isHurt = true;
                 _playerAttribute.Hp--;
                 UIManager.RefreshHp(_playerAttribute.Hp);
@@ -370,9 +373,9 @@ public class PlayerController : MonoBehaviour
             _instance._playerAttribute.MaxHp++;
             _instance._playerAttribute.Hp++;
             UIManager.RefreshHp(_instance._playerAttribute.Hp);
-            SoundManager.MaxHpIncreaseAudio();
+            AudioManager.MaxHpIncreaseAudio();
         }
-        else SoundManager.CherryAudio();
+        else AudioManager.CherryAudio();
 
         UIManager.RefreshCherryCount(_instance._playerAttribute.CherryCount);
     }
@@ -383,7 +386,7 @@ public class PlayerController : MonoBehaviour
     /// <param name="skill"></param>
     internal static void PickSkill(GameObject skill)
     {
-        SoundManager.SkillAudio();
+        AudioManager.SkillAudio();
         Destroy(skill);
     }
 
@@ -406,8 +409,8 @@ public class PlayerController : MonoBehaviour
             _instance._collider2D.enabled = false;
             _instance._boxCollider2D.enabled = false;
             _instance._animator.SetBool("hurt", true);
-            SoundManager.DeathAudio();
-            SoundManager.StopBgm();
+            AudioManager.DeathAudio();
+            AudioManager.StopBgm();
             _instance.Invoke("Reset", 2f);
             _instance = null;
         }

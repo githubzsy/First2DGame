@@ -11,6 +11,6 @@ public class DeadLine : InteractiveBase
 
     protected override void OnTriggerEnter2DAfter(Collider2D collision)
     {
-        PlayerController.PlayerDie();
+        PlayerManager.PlayerDie();
     }
 }

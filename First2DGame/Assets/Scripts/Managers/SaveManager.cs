@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -6,7 +7,7 @@ using UnityEngine;
 /// <summary>
 /// 管理本地化数据
 /// </summary>
-public static class JsonManager
+public static class SaveManager
 {
     /// <summary>
     /// 保存到Save文件夹
@@ -58,5 +59,12 @@ public static class JsonManager
         return t;
     }
 
-
+    /// <summary>
+    /// 保存游戏
+    /// </summary>
+    internal static void SaveGame()
+    {
+        PlayerManager.SavePlayer();
+        CollectionManager.SaveCollections();
+    }
 }

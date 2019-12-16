@@ -30,7 +30,7 @@ public class CollectionManager : MonoBehaviour
     /// </summary>
     void LoadCollections()
     {
-        _collectionInits = JsonManager.ReadFormFile<CollectionInits>(_collectionJson);
+        _collectionInits = SaveManager.ReadFormFile<CollectionInits>(_collectionJson);
     }
 
     /// <summary>
