@@ -26,11 +26,15 @@ public class CollectionManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 读取收集物品
+    /// 读取收集物品到内存
     /// </summary>
     void LoadCollections()
     {
         _collectionInits = SaveManager.ReadFormFile<CollectionInits>(_collectionJson);
+        if (_collectionInits == null)
+        {
+            _collectionInits=new CollectionInits();
+        }
     }
 
     /// <summary>
@@ -43,27 +47,38 @@ public class CollectionManager : MonoBehaviour
 
     void Start()
     {
-       InitCollections();
+        InitCollections();
     }
 
+    /// <summary>
+    /// 加载收集物到场景
+    /// </summary>
     void InitCollections()
     {
-        var collectionGroups = from a in _collectionInits.Collections
-            where a.PickedUp == false
-            group a by a.PrefabFileName
-            into g
-            select g;
+        //var collectionGroups = from a in _collectionInits.Collections
+        //    where a.PickedUp == false
+        //    group a by a.PrefabFileName
+        //    into g
+        //    select g;
         
-        foreach (var g in collectionGroups)
+        //foreach (var g in collectionGroups)
+        //{
+        //    var prefab = Resources.Load<GameObject>(g.Key);
+        //    foreach (var collection in g.ToList())
+        //    {
+        //        var temp = Instantiate(prefab, collection.Position, Quaternion.identity);
+        //        temp.transform.parent = this.gameObject.transform;
+        //        collection.InteractiveBase = temp.GetComponent<InteractiveBase>();
+        //    }
+        //}
+
+        foreach (var collection in _collectionInits.Collections.Where(a=>a.PickedUp==false))
         {
-            var prefab = Resources.Load<GameObject>(g.Key);
-            foreach (var collection in g.ToList())
-            {
-                var temp = Instantiate(prefab, collection.Position, Quaternion.identity);
-                temp.transform.parent = this.gameObject.transform;
-                collection.InteractiveBase = temp.GetComponent<InteractiveBase>();
-            }
+           var temp= PoolManager.Instance.Spawn(collection.PrefabFileName, collection.PrefabFileName, this.gameObject.transform,
+                collection.Position, Quaternion.identity);
+           collection.InteractiveBase = temp.GetComponent<InteractiveBase>();
         }
+
     }
 
 

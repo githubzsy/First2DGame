@@ -37,9 +37,11 @@ public class PoolManager
     /// <summary>
     /// 获取对象池中游戏对象
     /// </summary>
-    public GameObject Spawn(GameObject obj, Transform parent, Vector3 position, Quaternion quaternion)
+    internal GameObject Spawn(string prefabName,string prefabPath, Transform parent, Vector3 position, Quaternion quaternion)
     {
-        if (!_poolDic.ContainsKey(obj.name))
+        GameObject obj;
+        //若不包含这个预制体
+        if (!_poolDic.ContainsKey(prefabName))
         {
             //若超出对象池
             //则移除第一个预制物
@@ -49,9 +51,11 @@ public class PoolManager
                 _poolDic[removeKey].ClearAll();
                 _poolDic.Remove(removeKey);
             }
-            _poolDic.Add(obj.name,new PrefabPool(obj,50));
+            //从资源中加载预制体
+            obj = Resources.Load<GameObject>(prefabPath);
+            _poolDic.Add(prefabName, new PrefabPool(obj,50));
         }
-        PrefabPool prefabPool = _poolDic[obj.name];
+        PrefabPool prefabPool = _poolDic[prefabName];
         return prefabPool.PrefabPoolSpawn(parent, position, quaternion);
     }
 
@@ -76,10 +80,6 @@ public class PoolManager
     /// </summary>
     public void ClearPool()
     {
-        foreach (var poolDicValue in _poolDic.Values)
-        {
-            poolDicValue.ClearAll();
-        }
         _poolDic.Clear();
     }
 }

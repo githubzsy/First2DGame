@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public class PrefabPool
 {
-    private readonly GameObject _prefab;
+    internal readonly GameObject Prefab;
 
     private readonly int _poolSize;
 
@@ -21,14 +21,17 @@ public class PrefabPool
     /// <param name="poolSize">预制体池大小</param>
     public PrefabPool(GameObject prefab, int poolSize)
     {
-        this._prefab = prefab;
+        this.Prefab = prefab;
         this._poolSize = poolSize;
         this._pool = new Queue<GameObject>(_poolSize);
     }
 
     /// <summary>
-    /// 从池子中取出对象
+    /// 从池子中取出一个克隆对象,不存在时会初始化并取出
     /// </summary>
+    /// <param name="parent">克隆对象的父级</param>
+    /// <param name="position">克隆对象的位置</param>
+    /// <param name="quaternion">克隆对象的旋转</param>
     /// <returns></returns>
     public GameObject PrefabPoolSpawn(Transform parent, Vector3 position, Quaternion quaternion)
     {
@@ -47,7 +50,7 @@ public class PrefabPool
                 GameObject.Destroy(removeObj.gameObject);
             }
 
-            obj = Object.Instantiate(_prefab);
+            obj = Object.Instantiate(Prefab);
             _pool.Enqueue(obj);
         }
 
@@ -105,13 +108,17 @@ public class PrefabPool
     {
         foreach (GameObject item in _pool)
         {
-            if (item.activeSelf)
+            if (item != null)
             {
-                //进行回收
-                PrefabPoolUnSpawn(item);
+                if (item.activeSelf)
+                {
+                    //进行回收
+                    PrefabPoolUnSpawn(item);
+                }
+                //进行移除
+                GameObject.Destroy(item);
             }
-            //进行移除
-            GameObject.Destroy(item);
         }
+        _pool.Clear();
     }
 }

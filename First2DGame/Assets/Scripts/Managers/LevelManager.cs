@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -13,6 +14,24 @@ public static class LevelManager
     /// </summary>
     public static void LoadNext()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1).completed += LoadScene_Completed;
+    }
+
+    public static void LoadScene(string sceneName)
+    {
+        var res = SceneManager.LoadSceneAsync(sceneName);
+        res.completed += LoadScene_Completed;
+    }
+
+    public static void LoadSceneAsync(string sceneName,Action<AsyncOperation> callBack)
+    {
+        var res = SceneManager.LoadSceneAsync(sceneName);
+        res.completed += LoadScene_Completed;
+        res.completed += callBack;
+    }
+
+    private static void LoadScene_Completed(AsyncOperation obj)
+    {
+        PoolManager.Instance.ClearPool();
     }
 }

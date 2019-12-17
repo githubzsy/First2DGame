@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/House.unity
     guid: e6debee3514604549a01b05d2fd21d94
   - enabled: 1
+    path: Assets/Scenes/Cave.unity
+    guid: 26c0e251351cf04408ec07133d7c46da
+  - enabled: 1
     path: Assets/Scenes/WayToTown.unity
     guid: 3d1ba9bf55891024e9f7424974ea809a
   m_configObjects:

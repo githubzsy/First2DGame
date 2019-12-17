@@ -102,6 +102,12 @@ public class PlayerManager : MonoBehaviour
     internal static string PlayerAttributeJson = "PlayerAttribute.json";
 
     private static PlayerManager _instance;
+
+    /// <summary>
+    /// 是否从死亡中重置的
+    /// </summary>
+    private static bool _resetFromDead;
+
     void Awake()
     {
         if (_instance != null)
@@ -141,6 +147,13 @@ public class PlayerManager : MonoBehaviour
         if (SceneManager.GetActiveScene().buildIndex == _instance._playerAttribute.SaveSceneIndex)
         {
             _instance.transform.position = _instance._playerAttribute.SavePosition;
+        }
+
+        //如果玩家是从死亡中恢复,则Hp回满
+        if (_resetFromDead)
+        {
+            _instance._playerAttribute.Hp = _instance._playerAttribute.MaxHp;
+            _resetFromDead = false;
         }
     }
 
@@ -312,17 +325,17 @@ public class PlayerManager : MonoBehaviour
     private void Reset()
     {
         //重新加载当前场景
-        var op = SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
-        op.completed += Reset_completed;
+        LevelManager.LoadSceneAsync(SceneManager.GetActiveScene().name, Reset_completed);
     }
 
     /// <summary>
-    /// 场景加载完成后玩家生命值回满
+    /// 场景加载完成后打上死亡恢复标签
     /// </summary>
     /// <param name="obj"></param>
     private void Reset_completed(AsyncOperation obj)
     {
-        _playerAttribute.Hp = _playerAttribute.MaxHp;
+        //打上死亡恢复标签，让玩家的Hp填满
+        _resetFromDead = true;
     }
 
     /// <summary>

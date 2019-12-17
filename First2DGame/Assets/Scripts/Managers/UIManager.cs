@@ -87,7 +87,7 @@ public class UIManager : MonoBehaviour
     /// </summary>
     public static void Play()
     {
-        SceneManager.LoadScene("Start");
+        LevelManager.LoadNext();
     }
 
     /// <summary>
