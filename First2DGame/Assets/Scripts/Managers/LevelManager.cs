@@ -21,7 +21,7 @@ public static class LevelManager
     {
         var res = SceneManager.LoadSceneAsync(sceneName);
         res.completed += LoadScene_Completed;
-    }
+    }       
 
     public static void LoadSceneAsync(string sceneName,Action<AsyncOperation> callBack)
     {

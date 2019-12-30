@@ -21,6 +21,12 @@ public class Door : InteractiveBase
     [Header("要提示的文字")]
     public string DialogText;
 
+    /// <summary>
+    /// 下一个场景的位置
+    /// </summary>
+    [Header("下一个场景的位置")]
+    public Vector3 NextScenePosition;
+
     protected override void OnTriggerEnter2DAfter(Collider2D collision)
     {
         Dialog.ShowDialog(DialogText);
@@ -34,6 +40,7 @@ public class Door : InteractiveBase
     protected override void PlayerInteractive()
     {
         SaveManager.SaveGame();
+        PlayerManager.SetNextScenePosition(NextScenePosition);
         LevelManager.LoadScene(NextSceneName);
     }
 

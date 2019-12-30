@@ -1,0 +1,49 @@
+{
+    "Collections": [
+        {
+            "Position": {
+                "x": -23.11,
+                "y": -2.21,
+                "z": 0.0
+            },
+            "PickedUp": false,
+            "PrefabFileName": "Prefabs/Cherry"
+        },
+        {
+            "Position": {
+                "x": -5.12,
+                "y": 1.89,
+                "z": 0.0
+            },
+            "PickedUp": false,
+            "PrefabFileName": "Prefabs/Cherry"
+        },
+        {
+            "Position": {
+                "x": -23.37,
+                "y": -15.02,
+                "z": 0.0
+            },
+            "PickedUp": false,
+            "PrefabFileName": "Prefabs/Cherry"
+        },
+        {
+            "Position": {
+                "x": 14.38,
+                "y": 1.07,
+                "z": 0.0
+            },
+            "PickedUp": false,
+            "PrefabFileName": "Prefabs/Cherry"
+        },
+        {
+            "Position": {
+                "x": 42.62,
+                "y": -1.84,
+                "z": 0.0
+            },
+            "PickedUp": false,
+            "PrefabFileName": "Prefabs/SkillOneMoreJump"
+        }
+    ]
+}

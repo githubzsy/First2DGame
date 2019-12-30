@@ -73,13 +73,13 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         EventManager.StartListening("PauseGame", PauseGame);
-        PauseButton.onClick.AddListener(()=> EventManager.TriggerEvent("PauseGame"));
+        PauseButton.onClick.AddListener(() => EventManager.TriggerEvent("PauseGame"));
 
         EventManager.StartListening("ResumeGame", ResumeGame);
         ResumeButton.onClick.AddListener(() => EventManager.TriggerEvent("ResumeGame"));
 
-        EventManager.StartListening("SaveGame",SaveManager.SaveGame);
-        SaveExitButton.onClick.AddListener(()=>EventManager.TriggerEvent("SaveGame"));
+        EventManager.StartListening("SaveAndExitGame", SaveAndExitGame);
+        SaveExitButton.onClick.AddListener(()=>EventManager.TriggerEvent("SaveAndExitGame"));
     }
 
     /// <summary>
@@ -133,14 +133,9 @@ public class UIManager : MonoBehaviour
         Application.Quit();
     }
 
-    /// <summary>
-    /// 设置主音量
-    /// </summary>
-    /// <param name="value">音量值</param>
-
-    public static void SetVolume(float value)
+    public void SetVolume(float value)
     {
-        _instance.AudioMixer.SetFloat("MainVolume", value);
+        AudioMixer.SetFloat("MainVolume", value);
     }
 
     /// <summary>

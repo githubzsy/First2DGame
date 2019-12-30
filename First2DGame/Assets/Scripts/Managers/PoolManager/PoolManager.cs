@@ -80,6 +80,6 @@ public class PoolManager
     /// </summary>
     public void ClearPool()
     {
-        _poolDic.Clear();
+        _poolDic?.Clear();
     }
 }

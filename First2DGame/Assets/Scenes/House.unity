@@ -208,6 +208,16 @@ PrefabInstance:
       propertyPath: SwitchScene
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6435508855011670294, guid: f987d9664dd3ded479c3fd467835e8ed,
+        type: 3}
+      propertyPath: NextScenePosition.x
+      value: -1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6435508855011670294, guid: f987d9664dd3ded479c3fd467835e8ed,
+        type: 3}
+      propertyPath: NextScenePosition.y
+      value: -0.93
+      objectReference: {fileID: 0}
     - target: {fileID: 6435508855011670295, guid: f987d9664dd3ded479c3fd467835e8ed,
         type: 3}
       propertyPath: m_Materials.Array.data[0]

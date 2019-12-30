@@ -108,6 +108,16 @@ public class PlayerManager : MonoBehaviour
     /// </summary>
     private static bool _resetFromDead;
 
+    /// <summary>
+    /// 是否切换场景
+    /// </summary>
+    private static bool _changeScene;
+
+    /// <summary>
+    /// 下一个场景的位置
+    /// </summary>
+    private static Vector3 _nextScenePosition;
+
     void Awake()
     {
         if (_instance != null)
@@ -144,9 +154,15 @@ public class PlayerManager : MonoBehaviour
     static void LoadPlayer()
     {
         _instance._playerAttribute = SaveManager.ReadFormFile<PlayerAttribute>(PlayerAttributeJson);
+        // 如果玩家在本场景有存档，则载入存档位置
         if (SceneManager.GetActiveScene().buildIndex == _instance._playerAttribute.SaveSceneIndex)
         {
             _instance.transform.position = _instance._playerAttribute.SavePosition;
+        }
+        else if (_changeScene)
+        {
+            _instance.transform.position = _nextScenePosition;
+            _changeScene = false;
         }
 
         //如果玩家是从死亡中恢复,则Hp回满
@@ -155,6 +171,7 @@ public class PlayerManager : MonoBehaviour
             _instance._playerAttribute.Hp = _instance._playerAttribute.MaxHp;
             _resetFromDead = false;
         }
+        SaveManager.SaveGame();
     }
 
     /// <summary>
@@ -440,5 +457,15 @@ public class PlayerManager : MonoBehaviour
     internal int GetSaveSceneIndex()
     {
         return _playerAttribute.SaveSceneIndex;
+    }
+
+    /// <summary>
+    /// 设定下一个场景的所在位置
+    /// </summary>
+    /// <param name="position"></param>
+    internal static void SetNextScenePosition(Vector3 position)
+    {
+        _changeScene = true;
+        _nextScenePosition = position;
     }
 }

@@ -245,6 +245,7 @@ MonoBehaviour:
   PlayerController: {fileID: 0}
   NextSceneName: House
   DialogText: "\u6309E\u56DE\u5BB6"
+  NextScenePosition: {x: -7.27, y: -2.92, z: 0}
 --- !u!1 &27550553
 GameObject:
   m_ObjectHideFlags: 0
@@ -6786,6 +6787,16 @@ PrefabInstance:
         type: 3}
       propertyPath: SwitchScene
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6435508855011670294, guid: f987d9664dd3ded479c3fd467835e8ed,
+        type: 3}
+      propertyPath: NextScenePosition.x
+      value: -16.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6435508855011670294, guid: f987d9664dd3ded479c3fd467835e8ed,
+        type: 3}
+      propertyPath: NextScenePosition.y
+      value: -7.9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f987d9664dd3ded479c3fd467835e8ed, type: 3}

@@ -15,7 +15,7 @@ public class MainMenu : MonoBehaviour
     {
         PlayButton.onClick.AddListener(Play);
         QuitButton.onClick.AddListener(Quit);
-        _playerAttribute=SaveManager.ReadFormFile<PlayerAttribute>(PlayerManager.PlayerAttributeJson, true);
+        _playerAttribute = SaveManager.ReadFormFile<PlayerAttribute>(PlayerManager.PlayerAttributeJson, true);
     }
 
     private void Quit()
@@ -25,7 +25,7 @@ public class MainMenu : MonoBehaviour
 
     private void Play()
     {
-        if (_playerAttribute.SaveSceneIndex != 0)
+        if (_playerAttribute?.SaveSceneIndex != 0)
         {
             SceneManager.LoadScene(_playerAttribute.SaveSceneIndex);
             return;
