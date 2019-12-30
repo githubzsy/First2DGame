@@ -16,7 +16,7 @@ public static class SaveManager
     /// <param name="fileName">文件名称</param>
     public static void SaveToFile(this object obj, string fileName)
     {
-        string path = Application.streamingAssetsPath + "/Save/" + fileName;
+        string path = Application.persistentDataPath + "/Save/" + fileName;
         string dir = Path.GetDirectoryName(path);
         if (Directory.Exists(dir) ==false)
         {
@@ -37,13 +37,24 @@ public static class SaveManager
     public static T ReadFormFile<T>(string fileName,bool readFromDefault=true)
     {
         T t = default;
-        string path = Application.streamingAssetsPath + "/Save/" + fileName;
+        string path = Application.persistentDataPath + "/Save/" + fileName;
         t = ReadFromFileInner<T>(path);
 
         if (t == null && readFromDefault)
         {
+            // streamingAssetsPath中读取
             path = Application.streamingAssetsPath + "/Default/" + fileName;
+
+#if UNITY_ANDROID
+            WWW www = new WWW(path);
+            while (!www.isDone)
+            {
+
+            }
+            t = JsonUtility.FromJson<T>(www.text);
+#else
             t = ReadFromFileInner<T>(path);
+#endif
         }
         return t;
     }
@@ -51,6 +62,7 @@ public static class SaveManager
     private static T ReadFromFileInner<T>(string path)
     {
         T t = default;
+
         if (File.Exists(path))
         {
             string json = File.ReadAllText(path);
@@ -66,5 +78,17 @@ public static class SaveManager
     {
         PlayerManager.SavePlayer();
         CollectionManager.SaveCollections();
+    }
+
+    /// <summary>
+    /// 删除存档
+    /// </summary>
+    internal static void DeleteSaveData()
+    {
+        string path = Application.persistentDataPath + "/Save/";
+        if (Directory.Exists(path))
+        {
+            Directory.Delete(path, true);
+        }
     }
 }
